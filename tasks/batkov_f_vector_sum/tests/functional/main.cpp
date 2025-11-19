@@ -84,8 +84,9 @@ TEST_P(BatkovFRunFuncTestsProcesses, MatmulFromPic) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 2> kTestParam = {std::make_tuple("vec1.txt", 5050),
-                                            std::make_tuple("vec2.txt", 1450) };
+const std::array<TestType, 4> kTestParam = {
+    std::make_tuple("one_hundred_vec.txt", 5050), std::make_tuple("two_hundred_vec.txt", 2900),
+    std::make_tuple("odd_size_vector.txt", 1401), std::make_tuple("empty_vec.txt", 0)};
 
 const auto kTestTasksList =
     std::tuple_cat(ppc::util::AddFuncTask<BatkovFVectorSumMPI, InType>(kTestParam, PPC_SETTINGS_batkov_f_vector_sum),
