@@ -4,7 +4,6 @@
 
 #include <numeric>
 #include <vector>
-#include <iostream>
 
 #include "batkov_f_vector_sum/common/include/common.hpp"
 #include "util/include/util.hpp"
@@ -26,7 +25,6 @@ bool BatkovFVectorSumMPI::PreProcessingImpl() {
 }
 
 bool BatkovFVectorSumMPI::RunImpl() {
-
   int mpi_size = 0;
   int rank = 0;
 
@@ -34,34 +32,28 @@ bool BatkovFVectorSumMPI::RunImpl() {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   int elements_per_process = GetInput().size() / mpi_size;
+  int remainder = GetInput().size() % mpi_size;
   std::vector<int> local_vector(elements_per_process);
-  
-  MPI_Scatter(
-    GetInput().data(),
-    elements_per_process,
-    MPI_INT,
-    local_vector.data(),
-    elements_per_process,
-    MPI_INT,
-    0,
-    MPI_COMM_WORLD
-  );
-  
-  int local_sum = std::accumulate(local_vector.begin(), local_vector.end(), 0);  
-  
+
+  MPI_Scatter(GetInput().data(), elements_per_process, MPI_INT, local_vector.data(), elements_per_process, MPI_INT, 0,
+              MPI_COMM_WORLD);
+
+  int local_sum = 0;
+  for (int val : local_vector) {
+    local_sum += val;
+  }
+
+  if (rank == 0) {
+    for (int i = 0; i < remainder; i++) {
+      local_sum += GetInput()[mpi_size * elements_per_process + i];
+    }
+  }
+
   int global_sum = 0;
 
-  MPI_Allreduce(
-    &local_sum,
-    &global_sum,
-    1,
-    MPI_INT,
-    MPI_SUM,
-    MPI_COMM_WORLD
-  );
-  
+  MPI_Allreduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
   GetOutput() = global_sum;
-  
   return true;
 }
 

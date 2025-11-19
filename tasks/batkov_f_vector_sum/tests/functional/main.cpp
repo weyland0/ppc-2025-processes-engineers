@@ -23,7 +23,6 @@ namespace batkov_f_vector_sum {
 class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
-
     std::string filename = std::get<0>(test_param);
     int expected_sum = std::get<1>(test_param);
 
@@ -34,7 +33,6 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
 
  protected:
   void SetUp() override {
-    
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
     std::string filename = std::get<0>(params);
     expected_sum_ = std::get<1>(params);
@@ -50,8 +48,8 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
     while (file >> value) {
       input_data_.push_back(value);
     }
-    file.close();
 
+    file.close();
   }
 
   bool CheckTestOutputData(OutType &output_data) final {

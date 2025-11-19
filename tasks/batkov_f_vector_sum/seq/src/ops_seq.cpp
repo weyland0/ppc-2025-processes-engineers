@@ -1,6 +1,5 @@
 #include "batkov_f_vector_sum/seq/include/ops_seq.hpp"
 
-#include <numeric>
 #include <vector>
 
 #include "batkov_f_vector_sum/common/include/common.hpp"
@@ -23,15 +22,10 @@ bool BatkovFVectorSumSEQ::PreProcessingImpl() {
 }
 
 bool BatkovFVectorSumSEQ::RunImpl() {
-
-  const auto& data = GetInput();
   int sum = 0;
-
-  for (int val : data)
-  {
+  for (int val : GetInput()) {
     sum += val;
   }
-
   GetOutput() = sum;
   return true;
 }
