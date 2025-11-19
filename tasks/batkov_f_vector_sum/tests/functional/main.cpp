@@ -80,7 +80,7 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
 
 namespace {
 
-TEST_P(BatkovFRunFuncTestsProcesses, MatmulFromPic) {
+TEST_P(BatkovFRunFuncTestsProcesses, VectorSum) {
   ExecuteTest(GetParam());
 }
 
