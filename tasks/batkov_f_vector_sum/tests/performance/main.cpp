@@ -12,7 +12,7 @@ class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, O
   OutType expected_sum_;
 
   void SetUp() override {
-    std::string filename = "perf_vec.txt";
+    std::string filename = "one_million_vec.txt";
     expected_sum_ = -2609880;
 
     std::string abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_batkov_f_vector_sum, filename);
