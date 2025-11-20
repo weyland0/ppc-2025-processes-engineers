@@ -53,7 +53,7 @@ bool BatkovFVectorSumMPI::RunImpl() {
     local_sum += input[i];
   }
 
-  std::uint64_t global_sum = 0;
+  int global_sum = 0;
   MPI_Allreduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
   GetOutput() = global_sum;
