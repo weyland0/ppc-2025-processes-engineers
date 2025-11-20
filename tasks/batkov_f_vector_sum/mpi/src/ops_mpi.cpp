@@ -25,33 +25,43 @@ bool BatkovFVectorSumMPI::PreProcessingImpl() {
 }
 
 bool BatkovFVectorSumMPI::RunImpl() {
-  int mpi_size = 0;
   int rank = 0;
+  int mpi_size = 0;
 
-  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  int elements_per_process = GetInput().size() / mpi_size;
-  int remainder = GetInput().size() % mpi_size;
-  std::vector<int> local_vector(elements_per_process);
+  auto& input = GetInput();
+  size_t input_size = input.size();
 
-  MPI_Scatter(GetInput().data(), elements_per_process, MPI_INT, local_vector.data(), elements_per_process, MPI_INT, 0,
-              MPI_COMM_WORLD);
+  size_t base_elements_per_process = input_size / mpi_size;
+  size_t extra_elements = input_size % mpi_size;
 
+  bool this_process_gets_extra = (static_cast<size_t>(rank) < extra_elements);
+  size_t elements_for_this_process = base_elements_per_process + (this_process_gets_extra ? 1 : 0);
+
+  size_t start_index = 0;
+  if (this_process_gets_extra) {
+    start_index = base_elements_per_process * rank + rank;
+  } else {
+    start_index = base_elements_per_process * rank + extra_elements;
+  }
+  size_t end_index = start_index + elements_for_this_process;
+  
   int local_sum = 0;
-  for (int val : local_vector) {
-    local_sum += val;
+  for (size_t i = start_index; i < end_index && i < input_size; i++) {
+    local_sum += input[i];
   }
-
-  if (rank == 0) {
-    for (int i = 0; i < remainder; i++) {
-      local_sum += GetInput()[mpi_size * elements_per_process + i];
-    }
-  }
-
-  int global_sum = 0;
-
-  MPI_Allreduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  
+  std::uint64_t global_sum = 0;
+  MPI_Allreduce(
+    &local_sum,
+    &global_sum,
+    1,
+    MPI_INT,
+    MPI_SUM,
+    MPI_COMM_WORLD
+  );
 
   GetOutput() = global_sum;
   return true;
