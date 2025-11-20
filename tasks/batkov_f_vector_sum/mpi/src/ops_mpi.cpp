@@ -31,7 +31,7 @@ bool BatkovFVectorSumMPI::RunImpl() {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 
-  auto& input = GetInput();
+  auto &input = GetInput();
   size_t input_size = input.size();
 
   size_t base_elements_per_process = input_size / mpi_size;
@@ -47,21 +47,14 @@ bool BatkovFVectorSumMPI::RunImpl() {
     start_index = base_elements_per_process * rank + extra_elements;
   }
   size_t end_index = start_index + elements_for_this_process;
-  
+
   int local_sum = 0;
   for (size_t i = start_index; i < end_index && i < input_size; i++) {
     local_sum += input[i];
   }
-  
+
   std::uint64_t global_sum = 0;
-  MPI_Allreduce(
-    &local_sum,
-    &global_sum,
-    1,
-    MPI_INT,
-    MPI_SUM,
-    MPI_COMM_WORLD
-  );
+  MPI_Allreduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
   GetOutput() = global_sum;
   return true;
