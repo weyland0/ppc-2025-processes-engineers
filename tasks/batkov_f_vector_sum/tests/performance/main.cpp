@@ -27,6 +27,12 @@ class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, O
       input_data_.push_back(value);
     }
 
+    for (size_t i = 0; i < 7; ++i) {
+      input_data_.insert(input_data_.end(), input_data_.begin(), input_data_.end());
+
+    }
+    expected_sum_ *= 128;
+
     file.close();
   }
 
