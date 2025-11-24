@@ -1,16 +1,13 @@
 #include <gtest/gtest.h>
 #include <stb/stb_image.h>
 
-#include <algorithm>
 #include <array>
+#include <cctype>
 #include <cstddef>
-#include <cstdint>
-#include <numeric>
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
-#include <utility>
-#include <vector>
 
 #include "batkov_f_vector_sum/common/include/common.hpp"
 #include "batkov_f_vector_sum/mpi/include/ops_mpi.hpp"
@@ -44,7 +41,7 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
       throw std::runtime_error("Failed to open file: " + abs_path);
     }
 
-    int value;
+    int value = 0;
     while (file >> value) {
       input_data_.push_back(value);
     }
@@ -63,7 +60,7 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
   static std::string SanitizeParamName(const std::string &name) {
     std::string sanitized = name;
     for (char &c : sanitized) {
-      if (!std::isalnum(static_cast<unsigned char>(c)) && c != '_') {
+      if (std::isalnum(static_cast<unsigned char>(c)) == 0 && c != '_') {
         c = '_';
       }
     }

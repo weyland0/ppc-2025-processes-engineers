@@ -1,15 +1,24 @@
 #include <gtest/gtest.h>
 
+#include <cstddef>
+#include <fstream>
+#include <stdexcept>
+#include <string>
+
 #include "batkov_f_vector_sum/common/include/common.hpp"
 #include "batkov_f_vector_sum/mpi/include/ops_mpi.hpp"
 #include "batkov_f_vector_sum/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
+#include "util/include/util.hpp"
 
 namespace batkov_f_vector_sum {
 
 class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
   InType input_data_;
   OutType expected_sum_;
+
+ public:
+  BatkovFRunPerfTestProcesses() : input_data_(), expected_sum_(0) {}
 
   void SetUp() override {
     std::string filename = "one_million_vec.txt";
@@ -22,7 +31,7 @@ class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, O
       throw std::runtime_error("Failed to open file: " + abs_path);
     }
 
-    int value;
+    int value = 0;
     while (file >> value) {
       input_data_.push_back(value);
     }

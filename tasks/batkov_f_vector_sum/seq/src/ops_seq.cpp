@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "batkov_f_vector_sum/common/include/common.hpp"
-#include "util/include/util.hpp"
 
 namespace batkov_f_vector_sum {
 
