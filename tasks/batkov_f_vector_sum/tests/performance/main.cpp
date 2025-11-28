@@ -14,7 +14,7 @@
 namespace batkov_f_vector_sum {
 
 class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  InType input_data_{};
+  InType input_data_;
   OutType expected_sum_{0};
 
   void SetUp() override {
