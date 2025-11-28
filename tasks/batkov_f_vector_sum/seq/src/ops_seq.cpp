@@ -1,7 +1,5 @@
 #include "batkov_f_vector_sum/seq/include/ops_seq.hpp"
 
-#include <vector>
-
 #include "batkov_f_vector_sum/common/include/common.hpp"
 
 namespace batkov_f_vector_sum {

@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <stb/stb_image.h>
 
 #include <array>
 #include <cctype>
@@ -75,6 +74,7 @@ class BatkovFRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, 
 
 namespace {
 
+// NOLINTNEXTLINE
 TEST_P(BatkovFRunFuncTestsProcesses, VectorSum) {
   ExecuteTest(GetParam());
 }
@@ -91,6 +91,7 @@ const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
 const auto kPerfTestName = BatkovFRunFuncTestsProcesses::PrintFuncTestName<BatkovFRunFuncTestsProcesses>;
 
+// NOLINTNEXTLINE
 INSTANTIATE_TEST_SUITE_P(VectorSumFuncTests, BatkovFRunFuncTestsProcesses, kGtestValues, kPerfTestName);
 
 }  // namespace

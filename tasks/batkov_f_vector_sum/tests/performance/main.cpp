@@ -14,11 +14,8 @@
 namespace batkov_f_vector_sum {
 
 class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  InType input_data_;
-  OutType expected_sum_;
-
- public:
-  BatkovFRunPerfTestProcesses() : input_data_(), expected_sum_(0) {}
+  InType input_data_{};
+  OutType expected_sum_{0};
 
   void SetUp() override {
     std::string filename = "one_million_vec.txt";
@@ -53,6 +50,8 @@ class BatkovFRunPerfTestProcesses : public ppc::util::BaseRunPerfTests<InType, O
   }
 };
 
+namespace {
+
 TEST_P(BatkovFRunPerfTestProcesses, RunPerfModes) {
   ExecuteTest(GetParam());
 }
@@ -64,6 +63,9 @@ const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
 const auto kPerfTestName = BatkovFRunPerfTestProcesses::CustomPerfTestName;
 
+// NOLINTNEXTLINE
 INSTANTIATE_TEST_SUITE_P(RunModeTests, BatkovFRunPerfTestProcesses, kGtestValues, kPerfTestName);
+
+}  // namespace
 
 }  // namespace batkov_f_vector_sum
