@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 #include "batkov_f_vector_sum/common/include/common.hpp"
 #include "task/include/task.hpp"
 
@@ -17,6 +19,9 @@ class BatkovFVectorSumMPI : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
+
+  size_t m_rank_;
+  size_t m_mpi_size_;
 };
 
 }  // namespace batkov_f_vector_sum
