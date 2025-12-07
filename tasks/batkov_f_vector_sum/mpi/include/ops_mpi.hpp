@@ -20,8 +20,8 @@ class BatkovFVectorSumMPI : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 
-  size_t m_rank_;
-  size_t m_mpi_size_;
+  size_t m_rank_ {0};
+  size_t m_mpi_size_ {0};
 };
 
 }  // namespace batkov_f_vector_sum

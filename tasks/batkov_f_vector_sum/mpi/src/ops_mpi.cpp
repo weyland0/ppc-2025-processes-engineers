@@ -10,7 +10,7 @@
 
 namespace batkov_f_vector_sum {
 
-BatkovFVectorSumMPI::BatkovFVectorSumMPI(const InType &in) : m_rank_(0), m_mpi_size_(0) {
+BatkovFVectorSumMPI::BatkovFVectorSumMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
 
   int rank = 0;
