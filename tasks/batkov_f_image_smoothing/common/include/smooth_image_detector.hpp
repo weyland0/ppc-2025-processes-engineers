@@ -11,7 +11,7 @@ class ISmoothImageDetector {
   virtual ~ISmoothImageDetector() = default;
 
   virtual void SetThreshold(float) noexcept = 0;
-  [[nodiscard]] virtual bool IsSmooth(const Image&) const = 0;
+  [[nodiscard]] virtual bool IsSmooth(const Image &) const = 0;
 };
 
 class LaplacianVarianceSmoothDetector : public ISmoothImageDetector {
@@ -19,10 +19,10 @@ class LaplacianVarianceSmoothDetector : public ISmoothImageDetector {
   ~LaplacianVarianceSmoothDetector() override = default;
 
   void SetThreshold(float threshold) noexcept override;
-  [[nodiscard]] bool IsSmooth(const Image& image) const override;
+  [[nodiscard]] bool IsSmooth(const Image &image) const override;
 
  private:
-  [[nodiscard]] static float CalcLaplacianVariance(const Image& image);
+  [[nodiscard]] static float CalcLaplacianVariance(const Image &image);
 
   float threshold_ = 100;
 };

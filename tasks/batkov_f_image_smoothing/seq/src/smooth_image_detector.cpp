@@ -12,15 +12,15 @@ void LaplacianVarianceSmoothDetector::SetThreshold(float threshold) noexcept {
   threshold_ = std::max(threshold_, threshold);
 }
 
-bool LaplacianVarianceSmoothDetector::IsSmooth(const Image& image) const {
+bool LaplacianVarianceSmoothDetector::IsSmooth(const Image &image) const {
   float blur_value = LaplacianVarianceSmoothDetector::CalcLaplacianVariance(image);
   return blur_value < threshold_;
 }
 
-float LaplacianVarianceSmoothDetector::CalcLaplacianVariance(const Image& image) {
+float LaplacianVarianceSmoothDetector::CalcLaplacianVariance(const Image &image) {
   std::vector<float> gray(image.GetWidth() * image.GetHeight());
 
-  const auto& image_data = image.GetData();
+  const auto &image_data = image.GetData();
   size_t width = image.GetWidth();
   size_t height = image.GetHeight();
   size_t channels = image.GetChannels();

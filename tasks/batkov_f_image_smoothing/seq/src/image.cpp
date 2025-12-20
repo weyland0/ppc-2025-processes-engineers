@@ -9,12 +9,12 @@
 
 namespace batkov_f_image_smoothing {
 
-Image::Image(const std::string& filepath) {
+Image::Image(const std::string &filepath) {
   int width = 0;
   int height = 0;
   int channels = 0;
 
-  uint8_t* raw_data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+  uint8_t *raw_data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
   if (raw_data == nullptr) {
     throw std::runtime_error("Не удалось загрузить изображение");
   }
@@ -29,7 +29,7 @@ Image::Image(const std::string& filepath) {
   stbi_image_free(raw_data);
 }
 
-Image::Image(const std::vector<uint8_t>& data, size_t width, size_t heigth, size_t channels)
+Image::Image(const std::vector<uint8_t> &data, size_t width, size_t heigth, size_t channels)
     : width_(width), height_(heigth), channels_(channels), data_(data) {}
 
 size_t Image::GetWidth() const noexcept {
@@ -44,7 +44,7 @@ size_t Image::GetChannels() const noexcept {
   return channels_;
 }
 
-const std::vector<uint8_t>& Image::GetData() const noexcept {
+const std::vector<uint8_t> &Image::GetData() const noexcept {
   return data_;
 }
 

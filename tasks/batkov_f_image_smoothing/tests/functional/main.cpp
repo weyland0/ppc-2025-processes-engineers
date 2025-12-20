@@ -61,10 +61,9 @@ TEST_P(BatkovFRunFuncTestsProcesses2, ImageSmoothing) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 4> kTestParam = {
-    std::make_tuple("test1.jpeg", 50.0F), std::make_tuple("test2.jpeg", 50.0F), std::make_tuple("test3.jpeg", 300.0F),
-    std::make_tuple("test4.jpeg", 110.0F)
-};
+const std::array<TestType, 4> kTestParam = {std::make_tuple("test1.jpeg", 50.0F), std::make_tuple("test2.jpeg", 50.0F),
+                                            std::make_tuple("test3.jpeg", 300.0F),
+                                            std::make_tuple("test4.jpeg", 110.0F)};
 
 const auto kTestTasksList = std::tuple_cat(
     ppc::util::AddFuncTask<BatkovFImageSmoothingSEQ, InType>(kTestParam, PPC_SETTINGS_batkov_f_image_smoothing),
