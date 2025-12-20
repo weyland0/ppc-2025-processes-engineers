@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstddef>
-
 #include "batkov_f_image_smoothing/common/include/image.hpp"
 
 namespace batkov_f_image_smoothing {
