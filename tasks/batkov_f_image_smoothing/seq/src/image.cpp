@@ -33,6 +33,9 @@ Image::Image(const std::string &filepath) {
 Image::Image(const std::vector<uint8_t> &data, size_t width, size_t heigth, size_t channels)
     : width_(width), height_(heigth), channels_(channels), data_(data) {}
 
+Image::Image(const std::vector<uint8_t> &&data, size_t width, size_t heigth, size_t channels)
+    : width_(width), height_(heigth), channels_(channels), data_(data) {}
+
 size_t Image::GetWidth() const noexcept {
   return width_;
 }

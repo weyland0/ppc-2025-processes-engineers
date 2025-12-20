@@ -12,6 +12,7 @@ class Image {
   Image() = default;
   explicit Image(const std::string &filepath);
   explicit Image(const std::vector<uint8_t> &data, size_t width, size_t heigth, size_t channels);
+  explicit Image(const std::vector<uint8_t> &&data, size_t width, size_t heigth, size_t channels);
 
   [[nodiscard]] size_t GetWidth() const noexcept;
   [[nodiscard]] size_t GetHeight() const noexcept;
