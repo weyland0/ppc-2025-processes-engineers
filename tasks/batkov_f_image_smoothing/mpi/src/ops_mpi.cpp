@@ -8,8 +8,6 @@
 #include <vector>
 
 #include "batkov_f_image_smoothing/common/include/common.hpp"
-#include "batkov_f_image_smoothing/common/include/gaussian_kernel_fabric.hpp"
-#include "batkov_f_image_smoothing/common/include/image.hpp"
 
 namespace batkov_f_image_smoothing {
 
@@ -98,15 +96,40 @@ BatkovFImageSmoothingMPI::BatkovFImageSmoothingMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
   GetOutput() = Image();
-
-  gaussian_kernel_ = GaussianKernelFabric::Create(5, 1.0F);
 }
 
 bool BatkovFImageSmoothingMPI::ValidationImpl() {
-  return (GetInput().GetWidth() > 0) && (GetInput().GetHeight() > 0);
+  return (!GetInput().data.empty()) && (GetInput().width > 0) && (GetInput().height > 0);
 }
 
 bool BatkovFImageSmoothingMPI::PreProcessingImpl() {
+  size_t size = 5;
+  float sigma = 1.0F;
+
+  gaussian_kernel_.resize(size);
+  for (auto &v : gaussian_kernel_) {
+    v.resize(size);
+  }
+
+  float sum = 0.0F;
+  size_t half = size / 2;
+
+  for (size_t i = 0; i < size; i++) {
+    for (size_t j = 0; j < size; j++) {
+      size_t x = i - half;
+      size_t y = j - half;
+      float value = std::exp((-static_cast<float>((x * x) + (y * y)) / (2 * sigma * sigma)));
+      gaussian_kernel_[i][j] = value;
+      sum += value;
+    }
+  }
+
+  for (size_t i = 0; i < size; i++) {
+    for (size_t j = 0; j < size; j++) {
+      gaussian_kernel_[i][j] /= sum;
+    }
+  }
+
   return true;
 }
 
@@ -117,10 +140,10 @@ bool BatkovFImageSmoothingMPI::RunImpl() {
   MPI_Comm_size(MPI_COMM_WORLD, &int_size);
 
   auto &img = GetInput();
-  size_t width = img.GetWidth();
-  size_t height = img.GetHeight();
-  size_t channels = img.GetChannels();
-  const auto &img_data = img.GetData();
+  size_t width = img.width;
+  size_t height = img.height;
+  size_t channels = img.channels;
+  const auto &img_data = img.data;
 
   const auto rank = static_cast<size_t>(int_rank);
   const auto size = static_cast<size_t>(int_size);
@@ -156,7 +179,13 @@ bool BatkovFImageSmoothingMPI::RunImpl() {
 
   MPI_Bcast(result.data(), static_cast<int>(width * height * channels), MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
-  GetOutput() = Image(result, width, height, channels);
+  Image smooth_image;
+  smooth_image.data = std::move(result);
+  smooth_image.width = width;
+  smooth_image.height = height;
+  smooth_image.channels = channels;
+
+  GetOutput() = smooth_image;
 
   MPI_Barrier(MPI_COMM_WORLD);
   return true;
