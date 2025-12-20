@@ -1,7 +1,6 @@
 #include "batkov_f_image_smoothing/common/include/smooth_image_detector.hpp"
 
 #include <algorithm>
-#include <cstddef>
 #include <vector>
 
 #include "batkov_f_image_smoothing/common/include/image.hpp"
@@ -36,7 +35,7 @@ float LaplacianVarianceSmoothDetector::CalcLaplacianVariance(const Image &image)
       auto g = static_cast<float>(image_data[idx + 1]);
       auto b = static_cast<float>(image_data[idx + 2]);
 
-      gray[i] = 0.299F * r + 0.587F * g + 0.114F * b;
+      gray[i] = (0.299F * r) + (0.587F * g) + (0.114F * b);
     }
   }
 

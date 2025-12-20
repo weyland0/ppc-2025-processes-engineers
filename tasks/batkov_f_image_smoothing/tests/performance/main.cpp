@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <string>
 
 #include "batkov_f_image_smoothing/common/include/common.hpp"
+#include "batkov_f_image_smoothing/common/include/image.hpp"
 #include "batkov_f_image_smoothing/common/include/smooth_image_detector.hpp"
 #include "batkov_f_image_smoothing/mpi/include/ops_mpi.hpp"
 #include "batkov_f_image_smoothing/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
+#include "util/include/util.hpp"
 
 namespace batkov_f_image_smoothing {
 

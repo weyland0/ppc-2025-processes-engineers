@@ -15,7 +15,7 @@ std::vector<std::vector<float>> GaussianKernelFabric::Create(size_t size, float 
     for (size_t j = 0; j < size; j++) {
       size_t x = i - half;
       size_t y = j - half;
-      float value = exp(-static_cast<float>((x * x) + (y * y)) / (2 * sigma * sigma));
+      float value = std::exp((-static_cast<float>((x * x) + (y * y)) / (2 * sigma * sigma)));
       kernel[i][j] = value;
       sum += value;
     }
