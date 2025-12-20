@@ -1,6 +1,7 @@
 #include "batkov_f_image_smoothing/common/include/smooth_image_detector.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <vector>
 
 #include "batkov_f_image_smoothing/common/include/image.hpp"
