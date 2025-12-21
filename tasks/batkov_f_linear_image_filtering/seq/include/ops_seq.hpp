@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <vector>
 
 #include "batkov_f_linear_image_filtering/common/include/common.hpp"
 #include "task/include/task.hpp"
@@ -20,7 +20,7 @@ class BatkovFLinearImageFilteringSEQ : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 
-  std::array<std::array<float, 3>, 3> kernel_;
+  std::vector<std::vector<float>> kernel_;
 };
 
 }  // namespace batkov_f_linear_image_filtering

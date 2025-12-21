@@ -10,8 +10,14 @@
 
 namespace batkov_f_linear_image_filtering {
 
+struct Pixel {
+  uint8_t r{};
+  uint8_t g{};
+  uint8_t b{};
+};
+
 struct Image {
-  std::vector<uint8_t> data;
+  std::vector<Pixel> data;
   size_t width{};
   size_t height{};
   size_t channels{};
@@ -19,7 +25,7 @@ struct Image {
 
 using InType = Image;
 using OutType = Image;
-using TestType = std::tuple<int, std::string>;
+using TestType = std::tuple<std::string, size_t, size_t, size_t>;
 using BaseTask = ppc::task::Task<InType, OutType>;
 
 }  // namespace batkov_f_linear_image_filtering
