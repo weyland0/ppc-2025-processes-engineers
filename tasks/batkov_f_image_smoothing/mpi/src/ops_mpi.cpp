@@ -181,13 +181,10 @@ bool BatkovFImageSmoothingMPI::RunImpl() {
 
   MPI_Bcast(result.data(), static_cast<int>(width * height * channels), MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
-  Image smooth_image;
-  smooth_image.data = std::move(result);
-  smooth_image.width = width;
-  smooth_image.height = height;
-  smooth_image.channels = channels;
-
-  GetOutput() = smooth_image;
+  GetOutput().data = std::move(result);
+  GetOutput().width = width;
+  GetOutput().height = height;
+  GetOutput().channels = channels;
 
   MPI_Barrier(MPI_COMM_WORLD);
   return true;

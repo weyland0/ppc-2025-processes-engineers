@@ -87,13 +87,10 @@ bool BatkovFImageSmoothingSEQ::RunImpl() {
     }
   }
 
-  Image smooth_image;
-  smooth_image.data = std::move(temp);
-  smooth_image.width = width;
-  smooth_image.height = height;
-  smooth_image.channels = channels;
-
-  GetOutput() = smooth_image;
+  GetOutput().data = std::move(temp);
+  GetOutput().width = width;
+  GetOutput().height = height;
+  GetOutput().channels = channels;
   return true;
 }
 
