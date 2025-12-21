@@ -3,8 +3,10 @@
 #include <mpi.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 #include <vector>
 
 #include "batkov_f_image_smoothing/common/include/common.hpp"

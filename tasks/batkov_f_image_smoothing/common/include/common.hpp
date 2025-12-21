@@ -12,9 +12,9 @@ namespace batkov_f_image_smoothing {
 
 struct Image {
   std::vector<uint8_t> data;
-  size_t width;
-  size_t height;
-  size_t channels;
+  size_t width{};
+  size_t height{};
+  size_t channels{};
 };
 
 using InType = Image;

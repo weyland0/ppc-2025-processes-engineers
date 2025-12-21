@@ -1,6 +1,7 @@
 #include "batkov_f_image_smoothing/seq/include/ops_seq.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <utility>

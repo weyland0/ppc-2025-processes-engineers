@@ -6,6 +6,7 @@
 #include <random>
 #include <string>
 #include <tuple>
+#include <vector>
 
 #include "batkov_f_image_smoothing/common/include/common.hpp"
 #include "batkov_f_image_smoothing/mpi/include/ops_mpi.hpp"
