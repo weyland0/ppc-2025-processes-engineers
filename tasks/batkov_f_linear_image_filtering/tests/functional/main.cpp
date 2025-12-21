@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cmath>
 #include <cstddef>
 #include <random>
 #include <string>
@@ -22,8 +21,7 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
     std::string p0 = std::get<0>(test_param);
     std::string p1 = std::to_string(std::get<1>(test_param));
     std::string p2 = std::to_string(std::get<2>(test_param));
-    std::string p3 = std::to_string(std::get<3>(test_param));
-    return p0 + "_" + p1 + "x" + p2 + "x" + p3;
+    return p0 + "_" + p1 + "x" + p2;
   }
 
  protected:
@@ -31,48 +29,66 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
     input_data_.width = std::get<1>(params);
     input_data_.height = std::get<2>(params);
-    input_data_.channels = std::get<3>(params);
 
-    size_t size = input_data_.width * input_data_.height * input_data_.channels;
+    size_t size = input_data_.width * input_data_.height;
     input_data_.data.resize(size);
 
     for (size_t i = 0; i < size; ++i) {
-      input_data_.data[i] = dis_(gen_);
+      input_data_.data[i].r = dis_(gen_);
+      input_data_.data[i].b = dis_(gen_);
+      input_data_.data[i].g = dis_(gen_);
     }
+
+    preprocess_blur_value_ = CalcLaplacianVariance(input_data_);
   }
 
-  static float CalculateMSE(const Image& original, const Image& filtered) {    
-    float sum = 0.0F;
-    for (size_t i = 0; i < original.data.size(); i++) {
-        float diff = static_cast<float>(original.data[i]) - static_cast<float>(filtered.data[i]);
-        sum += diff * diff;
-    }
-    
-    return sum / static_cast<float>(original.data.size());
-  }
+  static float CalcLaplacianVariance(const Image &image) {
+    std::vector<float> gray(image.width * image.height);
 
-  static float CalculatePSNR(const Image& original, const Image& filtered) {
-    float mse = CalculateMSE(original, filtered);
-    
-    if (mse < 1e-10) {
-        return 100.0;
+    const auto &data = image.data;
+    size_t width = image.width;
+    size_t height = image.height;
+
+    for (size_t i = 0; i < width * height; i++) {
+      auto r = static_cast<float>(data[i].r);
+      auto g = static_cast<float>(data[i].g);
+      auto b = static_cast<float>(data[i].b);
+
+      gray[i] = (0.299F * r) + (0.587F * g) + (0.114F * b);
     }
-    
-    float max_value = 255.0F;
-    float psnr = 10.0F * std::log10f((max_value * max_value) / mse);
-    
-    return psnr;
-}
+
+    std::vector<float> laplacian(width * height, 0.0F);
+    for (size_t y_px = 1; y_px < height - 1; y_px++) {
+      for (size_t x_px = 1; x_px < width - 1; x_px++) {
+        size_t idx = (y_px * width) + x_px;
+
+        float value = -gray[((y_px - 1) * width) + x_px] - gray[(y_px * width) + (x_px - 1)] + (4.0F * gray[idx]) -
+                      gray[(y_px * width) + (x_px + 1)] - gray[((y_px + 1) * width) + x_px];
+
+        laplacian[idx] = value;
+      }
+    }
+
+    float mean = 0.0F;
+    for (size_t i = 0; i < width * height; i++) {
+      mean += laplacian[i];
+    }
+    mean /= static_cast<float>(width * height);
+
+    float variance = 0.0F;
+    for (size_t i = 0; i < width * height; i++) {
+      float diff = laplacian[i] - mean;
+      variance += diff * diff;
+    }
+    variance /= static_cast<float>(width * height);
+
+    return variance;
+  }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    if (input_data_.data.size() != output_data.data.size()) {
-      return false;
-    }
+    float post_process_blur_value = CalcLaplacianVariance(output_data);
 
-    float psnr = CalculatePSNR(input_data_, output_data);
-    std::cout << "psnr = " << psnr << '\n';
-
-    return psnr > 40.0F;
+    return (preprocess_blur_value_ / post_process_blur_value) > 2.0F;
   }
 
   InType GetTestInputData() final {
@@ -84,6 +100,7 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
   std::mt19937 gen_{rd_()};
   std::uniform_int_distribution<size_t> dis_{0, 255};
 
+  float preprocess_blur_value_ = 0.0F;
   InType input_data_;
 };
 
@@ -94,12 +111,12 @@ TEST_P(BatkovFRunFuncTestsProcesses3, ImageSmoothing) {
 }
 
 const std::array<TestType, 4> kTestParam = {
-    std::make_tuple("tiny_image", 10, 10, 3), std::make_tuple("small_image", 50, 50, 3),
-    std::make_tuple("medium_image", 100, 100, 3), std::make_tuple("big_image", 300, 300, 3)};
+    std::make_tuple("tiny_image", 10, 10), std::make_tuple("small_image", 50, 50),
+    std::make_tuple("medium_image", 100, 100), std::make_tuple("big_image", 300, 300)};
 
-const auto kTestTasksList = std::tuple_cat(
-    ppc::util::AddFuncTask<BatkovFLinearImageFilteringSEQ, InType>(kTestParam, PPC_SETTINGS_batkov_f_linear_image_filtering));
-    // ppc::util::AddFuncTask<BatkovFImageSmoothingMPI, InType>(kTestParam, PPC_SETTINGS_batkov_f_image_smoothing));
+const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<BatkovFLinearImageFilteringSEQ, InType>(
+    kTestParam, PPC_SETTINGS_batkov_f_linear_image_filtering));
+// ppc::util::AddFuncTask<BatkovFImageSmoothingMPI, InType>(kTestParam, PPC_SETTINGS_batkov_f_image_smoothing));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 

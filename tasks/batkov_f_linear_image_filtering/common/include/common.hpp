@@ -20,12 +20,11 @@ struct Image {
   std::vector<Pixel> data;
   size_t width{};
   size_t height{};
-  size_t channels{};
 };
 
 using InType = Image;
 using OutType = Image;
-using TestType = std::tuple<std::string, size_t, size_t, size_t>;
+using TestType = std::tuple<std::string, size_t, size_t>;
 using BaseTask = ppc::task::Task<InType, OutType>;
 
 }  // namespace batkov_f_linear_image_filtering

@@ -79,8 +79,7 @@ bool BatkovFLinearImageFilteringSEQ::PreProcessingImpl() {
 
   GetOutput().width = GetInput().width;
   GetOutput().height = GetInput().height;
-  GetOutput().channels = GetInput().channels;
-  GetOutput().data.resize(GetInput().width * GetInput().height * GetInput().channels);
+  GetOutput().data.resize(GetInput().width * GetInput().height);
 
   return true;
 }
