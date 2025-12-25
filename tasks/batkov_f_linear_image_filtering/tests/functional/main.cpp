@@ -11,7 +11,6 @@
 #include "batkov_f_linear_image_filtering/mpi/include/ops_mpi.hpp"
 #include "batkov_f_linear_image_filtering/seq/include/ops_seq.hpp"
 #include "util/include/func_test_util.hpp"
-#include "util/include/util.hpp"
 
 namespace batkov_f_linear_image_filtering {
 
@@ -21,7 +20,8 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
     std::string p0 = std::get<0>(test_param);
     std::string p1 = std::to_string(std::get<1>(test_param));
     std::string p2 = std::to_string(std::get<2>(test_param));
-    return p0 + "_" + p1 + "x" + p2;
+    std::string p3 = std::to_string(std::get<3>(test_param));
+    return p0 + "_" + p1 + "x" + p2 + "x" + p3;
   }
 
  protected:
@@ -29,14 +29,13 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
     TestType params = std::get<static_cast<std::size_t>(ppc::util::GTestParamIndex::kTestParams)>(GetParam());
     input_data_.width = std::get<1>(params);
     input_data_.height = std::get<2>(params);
+    input_data_.channels = std::get<3>(params);
 
-    size_t size = input_data_.width * input_data_.height;
+    size_t size = input_data_.width * input_data_.height * input_data_.channels;
     input_data_.data.resize(size);
 
     for (size_t i = 0; i < size; ++i) {
-      input_data_.data[i].r = dis_(gen_);
-      input_data_.data[i].b = dis_(gen_);
-      input_data_.data[i].g = dis_(gen_);
+      input_data_.data[i] = dis_(gen_);
     }
 
     preprocess_blur_value_ = CalcLaplacianVariance(input_data_);
@@ -48,13 +47,21 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
     const auto &data = image.data;
     size_t width = image.width;
     size_t height = image.height;
+    size_t channels = image.channels;
 
-    for (size_t i = 0; i < width * height; i++) {
-      auto r = static_cast<float>(data[i].r);
-      auto g = static_cast<float>(data[i].g);
-      auto b = static_cast<float>(data[i].b);
+    if (channels == 1) {
+      for (size_t i = 0; i < width * height; i++) {
+        gray[i] = static_cast<float>(data[i]);
+      }
+    } else {
+      for (size_t i = 0; i < width * height; i++) {
+        size_t idx = i * channels;
+        auto r = static_cast<float>(data[idx + 0]);
+        auto g = static_cast<float>(data[idx + 1]);
+        auto b = static_cast<float>(data[idx + 2]);
 
-      gray[i] = (0.299F * r) + (0.587F * g) + (0.114F * b);
+        gray[i] = (0.299F * r) + (0.587F * g) + (0.114F * b);
+      }
     }
 
     std::vector<float> laplacian(width * height, 0.0F);
@@ -106,23 +113,24 @@ class BatkovFRunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType,
 
 namespace {
 
-TEST_P(BatkovFRunFuncTestsProcesses3, ImageSmoothing) {
+TEST_P(BatkovFRunFuncTestsProcesses3, LinearFiltering) {
   ExecuteTest(GetParam());
 }
 
 const std::array<TestType, 4> kTestParam = {
-    std::make_tuple("tiny_image", 10, 10), std::make_tuple("small_image", 50, 50),
-    std::make_tuple("medium_image", 100, 100), std::make_tuple("big_image", 300, 300)};
+    std::make_tuple("tiny_image", 10, 10, 3), std::make_tuple("small_image", 50, 50, 3),
+    std::make_tuple("medium_image", 100, 100, 3), std::make_tuple("big_image", 300, 300, 3)};
 
 const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<BatkovFLinearImageFilteringSEQ, InType>(
-    kTestParam, PPC_SETTINGS_batkov_f_linear_image_filtering));
-// ppc::util::AddFuncTask<BatkovFImageSmoothingMPI, InType>(kTestParam, PPC_SETTINGS_batkov_f_image_smoothing));
+                                               kTestParam, PPC_SETTINGS_batkov_f_linear_image_filtering),
+                                           ppc::util::AddFuncTask<BatkovFLinearImageFilteringMPI, InType>(
+                                               kTestParam, PPC_SETTINGS_batkov_f_linear_image_filtering));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
 const auto kPerfTestName = BatkovFRunFuncTestsProcesses3::PrintFuncTestName<BatkovFRunFuncTestsProcesses3>;
 
-INSTANTIATE_TEST_SUITE_P(ImageSmoothingTests, BatkovFRunFuncTestsProcesses3, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(LinearFilteringTests, BatkovFRunFuncTestsProcesses3, kGtestValues, kPerfTestName);
 
 }  // namespace
 

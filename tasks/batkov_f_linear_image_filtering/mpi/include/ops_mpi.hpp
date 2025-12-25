@@ -1,22 +1,24 @@
-// #pragma once
+#pragma once
 
-// #include "batkov_f_linear_image_filtering/common/include/common.hpp"
-// #include "task/include/task.hpp"
+#include "batkov_f_linear_image_filtering/common/include/common.hpp"
+#include "task/include/task.hpp"
 
-// namespace batkov_f_linear_image_filtering {
+namespace batkov_f_linear_image_filtering {
 
-// class BatkovFLinearImageFilteringMPI : public BaseTask {
-//  public:
-//   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
-//     return ppc::task::TypeOfTask::kMPI;
-//   }
-//   explicit BatkovFLinearImageFilteringMPI(const InType &in);
+class BatkovFLinearImageFilteringMPI : public BaseTask {
+ public:
+  static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
+    return ppc::task::TypeOfTask::kMPI;
+  }
+  explicit BatkovFLinearImageFilteringMPI(const InType &in);
 
-//  private:
-//   bool ValidationImpl() override;
-//   bool PreProcessingImpl() override;
-//   bool RunImpl() override;
-//   bool PostProcessingImpl() override;
-// };
+ private:
+  bool ValidationImpl() override;
+  bool PreProcessingImpl() override;
+  bool RunImpl() override;
+  bool PostProcessingImpl() override;
 
-// }  // namespace batkov_f_linear_image_filtering
+  Kernel kernel_;
+};
+
+}  // namespace batkov_f_linear_image_filtering
