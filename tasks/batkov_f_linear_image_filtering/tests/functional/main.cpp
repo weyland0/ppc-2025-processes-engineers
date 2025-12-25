@@ -11,6 +11,7 @@
 #include "batkov_f_linear_image_filtering/mpi/include/ops_mpi.hpp"
 #include "batkov_f_linear_image_filtering/seq/include/ops_seq.hpp"
 #include "util/include/func_test_util.hpp"
+#include "util/include/util.hpp"
 
 namespace batkov_f_linear_image_filtering {
 
